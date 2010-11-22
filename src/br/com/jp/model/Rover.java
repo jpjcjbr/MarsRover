@@ -1,25 +1,72 @@
 package br.com.jp.model;
 
+import br.com.jp.model.state.RoverState;
+import br.com.jp.model.state.factory.RoverStateFactory;
+
 public class Rover {
 
 	private Position position;
-	private Direction direction;
+	private HeadingTo headingTo;
 	
-	public Rover(Position initialPosition, Direction initialDirection)
+	private RoverState roverState;
+	
+	public Rover(Position initialPosition, HeadingTo headingTo)
 	{
 		this.position = initialPosition;
-		this.direction = initialDirection;
+		this.setHeadingTo(headingTo);
 	}
 	
-	public void move(char movementAcronym)
-	{
-		Command command = CommandFactory.getInstance().getCommand(movementAcronym);
-		
-		executeCommand(command);
+	public Position getPosition() {
+		return position;
+	}
+
+	public HeadingTo getHeadingTo() {
+		return headingTo;
 	}
 	
-	private void executeCommand(Command command)
+	public void spinLeft()
 	{
-		command.execute(this);
+		roverState.spinLeft(this);
 	}
+	
+	public void spinRight()
+	{
+		roverState.spinRight(this);
+	}
+	
+	public void moveForward()
+	{
+		roverState.moveForward(this);
+	}
+	
+	public void moveToSouth()
+	{
+		position.decrementY();
+	}
+	
+	public void moveToNorth()
+	{
+		position.incrementY();
+	}
+	
+	public void moveToEast()
+	{
+		position.incrementX();
+	}
+	
+	public void moveToWest()
+	{
+		position.decrementX();
+	}
+
+	public void setHeadingTo(HeadingTo headingTo) {
+		this.headingTo = headingTo;
+		roverState = RoverStateFactory.getRoverState(headingTo);
+	}
+	
+	@Override
+	public String toString() {
+		return position.toString() + " " + headingTo.getAcronym();
+	}
+
 }
